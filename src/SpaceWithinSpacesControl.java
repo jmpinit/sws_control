@@ -8,7 +8,6 @@ public class SpaceWithinSpacesControl {
   private final static int ARRAY_WIDTH = 10;
   private final static int ARRAY_HEIGHT = 18;
   private final static int ARRAY_PORT = 4210;
-  private InetAddress BROADCAST_ADDRESS;
 
   // A lookup table for bulb brightness which linearizes the output
   // Derived from measurements of the real array
@@ -63,11 +62,13 @@ public class SpaceWithinSpacesControl {
 
   private PApplet parent;
   private boolean useCanvas;
+
   private DatagramSocket sock;
+  private InetAddress address;
 
   public PImage currentFrame;
 
-  public SpaceWithinSpacesControl(PApplet parent, boolean useCanvas) {
+  public SpaceWithinSpacesControl(PApplet parent, boolean useCanvas, String broadcastAddress) {
     this.parent = parent;
     parent.registerMethod("dispose", this);
 
@@ -78,7 +79,7 @@ public class SpaceWithinSpacesControl {
     this.useCanvas = useCanvas;
 
     try {
-      BROADCAST_ADDRESS = InetAddress.getByName("255.255.255.255");
+      address = InetAddress.getByName(broadcastAddress);
     } catch (UnknownHostException e) {
       e.printStackTrace();
     }
@@ -92,7 +93,7 @@ public class SpaceWithinSpacesControl {
   }
 
   public SpaceWithinSpacesControl(PApplet parent) {
-    this(parent, true);
+    this(parent, true, "255.255.255.255");
   }
 
   private byte[] imageToBytes(PImage image) {
@@ -114,7 +115,7 @@ public class SpaceWithinSpacesControl {
     }
 
     byte[] imageBytes = imageToBytes(frame);
-    DatagramPacket packet = new DatagramPacket(imageBytes, imageBytes.length, BROADCAST_ADDRESS, ARRAY_PORT);
+    DatagramPacket packet = new DatagramPacket(imageBytes, imageBytes.length, address, ARRAY_PORT);
 
     try {
       this.sock.send(packet);
