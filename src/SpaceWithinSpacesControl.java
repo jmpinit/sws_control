@@ -46,12 +46,16 @@ public class SpaceWithinSpacesControl {
   }
 
   private byte[] imageToBytes(PImage image) {
-    byte[] bytes = new byte[ARRAY_WIDTH * ARRAY_HEIGHT + ARRAY_HEIGHT / 2];
+    byte[] bytes = new byte[ARRAY_WIDTH * ARRAY_HEIGHT * 2];
 
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
         int brightness = (int)parent.brightness(image.get(x, y));
-        bytes[y * ARRAY_WIDTH + x + (y % 2 == 1 ? 1 : 0)] = (byte)brightness;
+        int brightnessH = brightness >>> 8;
+        int brightnessL = brightness & 0xff;
+
+        bytes[y * ARRAY_WIDTH + x] = (byte)brightnessH;
+        bytes[y * ARRAY_WIDTH + x + 1] = (byte)brightnessL;
       }
     }
 
