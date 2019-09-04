@@ -51,11 +51,11 @@ public class SpaceWithinSpacesControl {
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
         int brightness = (int)parent.brightness(image.get(x, y));
-        int brightnessH = brightness >>> 8;
-        int brightnessL = brightness & 0xff;
+        int brightnessH = (int)parent.red(image.get(x, y));
+        int brightnessL = (int)parent.green(image.get(x, y));
 
-        bytes[y * ARRAY_WIDTH + x] = (byte)brightnessH;
-        bytes[y * ARRAY_WIDTH + x + 1] = (byte)brightnessL;
+        bytes[(y * ARRAY_WIDTH + x) * 2] = (byte)brightnessH;
+        bytes[(y * ARRAY_WIDTH + x) * 2 + 1] = (byte)brightnessL;
       }
     }
 
